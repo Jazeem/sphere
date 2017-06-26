@@ -35,7 +35,7 @@ public class GameRenderer {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(!myWorld.isGameOver()){
+        if(myWorld.getGameState() != Constants.GameState.DEAD){
             UserBall[] balls = myWorld.getBall();
 
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -45,10 +45,12 @@ public class GameRenderer {
             shapeRenderer.end();
 
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            for (UserBall ball:
-                 balls) {
-                drawCircle(ball);
-            }
+
+            if(myWorld.getGameState() == Constants.GameState.ALIVE || (int)(myWorld.getGameTime() * 2) % 2 == 0 )
+                for (UserBall ball:
+                     balls) {
+                    drawCircle(ball);
+                }
             //shapeRenderer.line(540, 960, ball.getX(), ball.getY());
 
             for (Ball b:

@@ -25,10 +25,15 @@ public class GameWorld {
     private Random random;
     private float threshhold;
     private List<OtherBall> otherBalls;
-    private boolean gameOver;
+    private Constants.GameState gameState;
     private int score;
     private Preferences prefs;
     private UserBall balls[];
+    private float dyingTime;
+
+    public float getGameTime() {
+        return gameTime;
+    }
 
     public GameWorld(){
         prefs = Gdx.app.getPreferences("game");
@@ -51,14 +56,14 @@ public class GameWorld {
         gameTime = 0f;
         random = new Random();
         threshhold = 0f;
-        gameOver = false;
+        gameState = Constants.GameState.ALIVE;
         otherBalls = new ArrayList<OtherBall>();
         score = 0;
     }
 
     public void update(float delta){
-        if(!gameOver){
-            gameTime += delta;
+        gameTime += delta;
+        if(gameState == Constants.GameState.ALIVE){
             if(gameTime > threshhold){
                 threshhold += 1 + random.nextFloat() * 1;
                 OtherBall otherBall = new OtherBall(random.nextInt(3),
@@ -82,10 +87,12 @@ public class GameWorld {
             }
             checkCollisions();
         }
+        else if(gameTime > dyingTime + 3)
+            gameState = Constants.GameState.DEAD;
     }
 
-    public boolean isGameOver() {
-        return gameOver;
+    public Constants.GameState getGameState() {
+        return gameState;
     }
 
     public int getScore() {
@@ -101,7 +108,8 @@ public class GameWorld {
                 if(Math.abs(b.getX() - ball.getX()) <= 2 * Constants.BALL_RADIUS &&
                         Math.abs(b.getY() - ball.getY()) <= 2 * Constants.BALL_RADIUS){
                     if(b.getType() == Constants.BallType.RED){
-                        gameOver = true;
+                        gameState = Constants.GameState.DYING;
+                        dyingTime = gameTime;
                         if(prefs.getInteger(PREF_HIGH_SCORE, 0) < score)
                             prefs.putInteger(PREF_HIGH_SCORE, score).flush();
                     }
@@ -111,11 +119,11 @@ public class GameWorld {
                              balls) {
                             ub.invertDirection();
                         }
-                        score += b.getLevel() + 2;
+                        score ++;
                     }
                     else {
                         i.remove();
-                        score += b.getLevel() + 1;
+                        score ++;
                     }
 
                 }
@@ -128,11 +136,12 @@ public class GameWorld {
     }
 
     public void screenTouched(int x, int y){
-        if(gameOver)
+        if(gameState == Constants.GameState.DEAD)
             initialize();
-        for (UserBall ball:
-             balls) {
-            ball.screenTouched(x, y);
-        }
+        else if(gameState == Constants.GameState.ALIVE)
+            for (UserBall ball:
+                 balls) {
+                ball.screenTouched(x, y);
+            }
     }
 }

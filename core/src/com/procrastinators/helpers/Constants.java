@@ -15,4 +15,5 @@ public class Constants {
     public static final int LETTER_HEIGHT = 25;
 
     public enum BallType { GREEN, RED, BLUE }
+    public enum GameState { ALIVE, DYING, DEAD }
 }
