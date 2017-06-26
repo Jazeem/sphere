@@ -36,7 +36,7 @@ public class GameRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if(!myWorld.isGameOver()){
-            UserBall ball = myWorld.getBall();
+            UserBall[] balls = myWorld.getBall();
 
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.WHITE);
@@ -45,7 +45,10 @@ public class GameRenderer {
             shapeRenderer.end();
 
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            drawCircle(ball);
+            for (UserBall ball:
+                 balls) {
+                drawCircle(ball);
+            }
             //shapeRenderer.line(540, 960, ball.getX(), ball.getY());
 
             for (Ball b:

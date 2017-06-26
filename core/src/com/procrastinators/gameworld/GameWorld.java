@@ -28,17 +28,16 @@ public class GameWorld {
     private boolean gameOver;
     private int score;
     private Preferences prefs;
+    private UserBall balls[];
 
     public GameWorld(){
         prefs = Gdx.app.getPreferences("game");
         initialize();
     }
 
-    public UserBall getBall() {
-        return ball;
+    public UserBall[] getBall() {
+        return balls;
     }
-
-    private UserBall ball;
 
     public List<OtherBall> getOtherBalls() {
         return otherBalls;
@@ -46,7 +45,9 @@ public class GameWorld {
 
 
     private void initialize(){
-        ball = new UserBall();
+        balls = new UserBall[2];
+        balls[0] = new UserBall();
+        balls[1] = new UserBall((float) Math.PI);
         gameTime = 0f;
         random = new Random();
         threshhold = 0f;
@@ -59,10 +60,10 @@ public class GameWorld {
         if(!gameOver){
             gameTime += delta;
             if(gameTime > threshhold){
-                threshhold += 3 + random.nextFloat() * 2;
+                threshhold += 1 + random.nextFloat() * 1;
                 OtherBall otherBall = new OtherBall(random.nextInt(3),
-                        ball.getTheta() + 90,// + random.nextFloat() * 180,
-                        random.nextInt(3));
+                        balls[0].getTheta() + (float) Math.PI / 2,// + random.nextFloat() * 180,
+                        1 + random.nextInt(2));
                 otherBall.update(delta);
                 otherBalls.add(otherBall);
             }
@@ -75,7 +76,10 @@ public class GameWorld {
                         i.remove();
                 //}
             }
-            ball.update(delta);
+            for (UserBall ball:
+                 balls) {
+                ball.update(delta);
+            }
             checkCollisions();
         }
     }
@@ -89,26 +93,32 @@ public class GameWorld {
     }
 
     private void checkCollisions(){
-        Iterator<OtherBall> i = otherBalls.iterator();
-        while (i.hasNext()) {
-            OtherBall b = i.next();
-            if(Math.abs(b.getX() - ball.getX()) <= 2 * Constants.BALL_RADIUS &&
-                    Math.abs(b.getY() - ball.getY()) <= 2 * Constants.BALL_RADIUS){
-                if(b.getType() == Constants.BallType.RED){
-                    gameOver = true;
-                    if(prefs.getInteger(PREF_HIGH_SCORE, 0) < score)
-                        prefs.putInteger(PREF_HIGH_SCORE, score).flush();
-                }
-                else if(b.getType() == Constants.BallType.BLUE){
-                    i.remove();
-                    ball.invertDirection();
-                    score += b.getLevel() + 2;
-                }
-                else {
-                    i.remove();
-                    score += b.getLevel() + 1;
-                }
+        for (UserBall ball:
+             balls) {
+            Iterator<OtherBall> i = otherBalls.iterator();
+            while (i.hasNext()) {
+                OtherBall b = i.next();
+                if(Math.abs(b.getX() - ball.getX()) <= 2 * Constants.BALL_RADIUS &&
+                        Math.abs(b.getY() - ball.getY()) <= 2 * Constants.BALL_RADIUS){
+                    if(b.getType() == Constants.BallType.RED){
+                        gameOver = true;
+                        if(prefs.getInteger(PREF_HIGH_SCORE, 0) < score)
+                            prefs.putInteger(PREF_HIGH_SCORE, score).flush();
+                    }
+                    else if(b.getType() == Constants.BallType.BLUE){
+                        i.remove();
+                        for (UserBall ub:
+                             balls) {
+                            ub.invertDirection();
+                        }
+                        score += b.getLevel() + 2;
+                    }
+                    else {
+                        i.remove();
+                        score += b.getLevel() + 1;
+                    }
 
+                }
             }
         }
     }
@@ -120,6 +130,9 @@ public class GameWorld {
     public void screenTouched(int x, int y){
         if(gameOver)
             initialize();
-        ball.screenTouched(x, y);
+        for (UserBall ball:
+             balls) {
+            ball.screenTouched(x, y);
+        }
     }
 }
