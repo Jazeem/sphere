@@ -8,12 +8,17 @@ import com.procrastinators.helpers.Constants;
 
 public class UserBall extends Ball {
     private float angV;
-    private int tX;
+    private int clockwise;
 
     public UserBall(){
-        r = 300;
+        r = Constants.RADIUS_MIN + Constants.RADIUS_STEP;
         theta = 0;
         angV = 1;
+        clockwise = 1;
+    }
+
+    public void invertDirection(){
+        clockwise *= -1;
     }
 
     public void screenTouched(int x, int y){
@@ -52,11 +57,15 @@ public class UserBall extends Ball {
         return new float[]{retX, retY};
     }
 
+    public float getAngV() {
+        return angV;
+    }
+
     @Override
     public void update(float delta) {
-        if(angV <= 2.5f)
-            angV += delta * 0.01;
-        theta += angV*delta;
+        if(angV <= 5f)
+            angV += delta * 0.04;
+        theta += clockwise * angV * delta;
         if(theta > 360)
             theta -= 360;
         super.update(delta);

@@ -34,7 +34,7 @@ public class GameWorld {
         initialize();
     }
 
-    public Ball getBall() {
+    public UserBall getBall() {
         return ball;
     }
 
@@ -59,21 +59,21 @@ public class GameWorld {
         if(!gameOver){
             gameTime += delta;
             if(gameTime > threshhold){
-                threshhold += random.nextFloat() * 5;
-                OtherBall otherBall = new OtherBall(Constants.RADIUS_STEP*random.nextInt(3) + Constants.RADIUS_MIN,
+                threshhold += 3 + random.nextFloat() * 2;
+                OtherBall otherBall = new OtherBall(random.nextInt(3),
                         ball.getTheta() + 90,// + random.nextFloat() * 180,
-                        random.nextBoolean());
+                        random.nextInt(3));
                 otherBall.update(delta);
                 otherBalls.add(otherBall);
             }
             Iterator<OtherBall> i = otherBalls.iterator();
             while (i.hasNext()) {
                 OtherBall b = i.next();
-                if(b.isDanger()){
+                //if(b.isDanger()){
                     b.update(delta);
                     if(b.getTtl() < 0)
                         i.remove();
-                }
+                //}
             }
             ball.update(delta);
             checkCollisions();
@@ -94,14 +94,19 @@ public class GameWorld {
             OtherBall b = i.next();
             if(Math.abs(b.getX() - ball.getX()) <= 2 * Constants.BALL_RADIUS &&
                     Math.abs(b.getY() - ball.getY()) <= 2 * Constants.BALL_RADIUS){
-                if(b.isDanger()){
+                if(b.getType() == Constants.BallType.RED){
                     gameOver = true;
                     if(prefs.getInteger(PREF_HIGH_SCORE, 0) < score)
                         prefs.putInteger(PREF_HIGH_SCORE, score).flush();
                 }
+                else if(b.getType() == Constants.BallType.BLUE){
+                    i.remove();
+                    ball.invertDirection();
+                    score += b.getLevel() + 2;
+                }
                 else {
                     i.remove();
-                    score++;
+                    score += b.getLevel() + 1;
                 }
 
             }

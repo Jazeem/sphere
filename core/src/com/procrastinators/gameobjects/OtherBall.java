@@ -9,21 +9,37 @@ import com.procrastinators.helpers.Constants;
 
 public class OtherBall extends Ball {
     private float ttl;
-    private boolean danger;
+    private Constants.BallType type;
+    private int level;
 
-    public boolean isDanger() {
-        return danger;
+    public Constants.BallType getType() {
+        return type;
     }
 
-    public OtherBall(float r, float theta, Boolean danger){
-        this.r = r;
-        this.theta = theta;
-        this.danger = danger;
-        if(this.danger)
-            this.color = Color.RED;
-        else
-            this.color = Color.GREEN;
+    public int getLevel() {
+        return level;
+    }
 
+    public OtherBall(int level, float theta, int type){
+        this.theta = theta;
+        this.level = level;
+        this.r = Constants.RADIUS_STEP*level + Constants.RADIUS_MIN;
+        switch (type){
+            case 0:
+                this.type = Constants.BallType.GREEN;
+                this.color = Color.GREEN;
+                break;
+            case 1:
+                this.type = Constants.BallType.RED;
+                this.color = Color.RED;
+                break;
+            case 2:
+                this.type = Constants.BallType.BLUE;
+                this.color = Color.BLUE;
+                break;
+            default:
+                break;
+        }
         this.radius = Constants.BALL_RADIUS;
         ttl = 5f;
     }

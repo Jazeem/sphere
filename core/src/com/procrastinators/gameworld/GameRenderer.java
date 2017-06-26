@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.procrastinators.gameobjects.Ball;
+import com.procrastinators.gameobjects.UserBall;
 import com.procrastinators.helpers.AssetLoader;
 import com.procrastinators.helpers.Constants;
 
@@ -35,7 +36,7 @@ public class GameRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if(!myWorld.isGameOver()){
-            Ball ball = myWorld.getBall();
+            UserBall ball = myWorld.getBall();
 
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.WHITE);
@@ -54,7 +55,11 @@ public class GameRenderer {
             shapeRenderer.end();
             batcher.begin();
             batcher.disableBlending();
-            drawText(String.valueOf(myWorld.getScore()),Constants.CENTER_X, Constants.CENTER_Y - 500, 3);
+            drawText(String.valueOf(myWorld.getScore()),Constants.CENTER_X, Constants.CENTER_Y - 600, 3);
+//            String speed = String.valueOf(ball.getAngV() * 100);
+//            if(speed.split("\\.").length > 1)
+//                speed = speed.split("\\.")[0];
+//            drawText(speed, Constants.CENTER_X, Constants.CENTER_Y - 700, 3);
             batcher.end();
         }
         else{

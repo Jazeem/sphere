@@ -16,7 +16,6 @@ public class Ball {
     protected float r;
     protected float theta;
 
-
     public float getRadius() {
         return radius;
     }
