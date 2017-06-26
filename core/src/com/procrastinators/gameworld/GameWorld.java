@@ -60,7 +60,7 @@ public class GameWorld {
             gameTime += delta;
             if(gameTime > threshhold){
                 threshhold += random.nextFloat() * 5;
-                OtherBall otherBall = new OtherBall((Constants.RADIUS_MAX - Constants.RADIUS_MIN)*random.nextFloat() + Constants.RADIUS_MIN,
+                OtherBall otherBall = new OtherBall(Constants.RADIUS_STEP*random.nextInt(3) + Constants.RADIUS_MIN,
                         ball.getTheta() + 90,// + random.nextFloat() * 180,
                         random.nextBoolean());
                 otherBall.update(delta);
