@@ -16,7 +16,7 @@ public class UserBall extends Ball {
 
     public UserBall(float theta){
         this.theta = theta;
-        r = Constants.RADIUS_MIN + Constants.RADIUS_STEP;
+        r = Constants.RADIUS_MIN + 2 * Constants.RADIUS_STEP;
         angV = 1;
         clockwise = 1;
     }

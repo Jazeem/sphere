@@ -59,6 +59,37 @@ public class GameWorld {
         gameState = Constants.GameState.ALIVE;
         otherBalls = new ArrayList<OtherBall>();
         score = 0;
+        float theta = balls[0].getTheta();
+        for(int i = 0; i < 3; i++){
+            theta += (float) Math.PI / 3 + random.nextFloat() * (float) Math.PI / 6;
+            OtherBall otherBall = new OtherBall(i,
+                    theta,
+                    1);
+            otherBall.update(0f);
+            otherBalls.add(otherBall);
+        }
+        addBlueBall();
+    }
+
+    private void addBlueBall(){
+        OtherBall otherBall;
+        do{
+            otherBall = new OtherBall(random.nextInt(3),
+                    random.nextFloat() * (float) Math.PI * 2,
+                    2);
+        }while (nearRedBalls(otherBall));
+        otherBall.update(0f);
+        otherBalls.add(otherBall);
+    }
+
+    private boolean nearRedBalls(OtherBall ball){
+        for (OtherBall b:
+             otherBalls) {
+            float diff = Math.abs(b.getTheta() - ball.getTheta());
+            if(diff < Math.PI / 8 || diff > Math.PI * 7 / 8)
+                return true;
+        }
+        return false;
     }
 
     public void update(float delta){
@@ -66,21 +97,19 @@ public class GameWorld {
         if(gameState == Constants.GameState.ALIVE){
             if(gameTime > threshhold){
                 threshhold += 1 + random.nextFloat() * 1;
-                OtherBall otherBall = new OtherBall(random.nextInt(3),
-                        balls[0].getTheta() + (float) Math.PI / 2,// + random.nextFloat() * 180,
-                        1 + random.nextInt(2));
-                otherBall.update(delta);
-                otherBalls.add(otherBall);
+//                OtherBall otherBall = new OtherBall(random.nextInt(3),
+//                        balls[0].getTheta() + (float) Math.PI / 2,// + random.nextFloat() * 180,
+//                        1 + random.nextInt(2));
+//                otherBall.update(delta);
+//                otherBalls.add(otherBall);
             }
-            Iterator<OtherBall> i = otherBalls.iterator();
-            while (i.hasNext()) {
-                OtherBall b = i.next();
-                //if(b.isDanger()){
-                    b.update(delta);
-                    if(b.getTtl() < 0)
-                        i.remove();
-                //}
-            }
+//            Iterator<OtherBall> i = otherBalls.iterator();
+//            while (i.hasNext()) {
+//                OtherBall b = i.next();
+//                    b.update(delta);
+//                    if(b.getTtl() < 0)
+//                        i.remove();
+//            }
             for (UserBall ball:
                  balls) {
                 ball.update(delta);
@@ -120,6 +149,7 @@ public class GameWorld {
                             ub.invertDirection();
                         }
                         score ++;
+                        addBlueBall();
                     }
                     else {
                         i.remove();
